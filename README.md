@@ -1,8 +1,5 @@
 # 🌐 FreelancePay - Instant Global Payments for Freelancers
 
-> **HackMoney 2026 Submission**  
-> Multi-sponsor bounty targeting: Yellow ($5K) + Arc Crosschain ($2.5K) + Arc Payouts ($2.5K) + ENS Integration ($2K)
-
 ## 🎯 Problem Statement
 
 Freelancers working globally face three major pain points:
@@ -152,110 +149,6 @@ NEXT_PUBLIC_YELLOW_WS_URL=wss://clearnet-sandbox.yellow.com/ws
 NEXT_PUBLIC_ENS_SUBGRAPH_URL=https://api.thegraph.com/subgraphs/name/ensdomains/ens
 ```
 
-## 🎬 Demo Flow
-
-### Video Demo Script (2-3 minutes) - WINNING FORMULA
-
-**0:00 - 0:15 | Hook** 🎣
-"What if I told you freelancers could get paid instantly, without gas fees, on any chain?"
-*Show: PayPal waiting screen vs FreelancePay instant confirmation*
-
-**0:15 - 0:45 | The Problem** 😤
-- Show traditional payment: 3-7 days wait, 3-5% fees
-- "I'm a freelancer. I built this because I was tired of waiting."
-
-**0:45 - 1:30 | The Solution** ⚡
-- Demo the AI Agent: "Pay alice.eth $100 for the logo"
-- Show instant confirmation (< 1 second)
-- Highlight: "Zero gas fees - this happened off-chain"
-
-**1:30 - 2:00 | The Tech** 🔧
-- Quick architecture diagram
-- "Yellow Network for instant payments"
-- "Circle Arc for settlement to any chain"
-- "ENS for decentralized identity"
-
-**2:00 - 2:30 | Settlement** 💰
-- Show freelancer dashboard
-- One-click withdraw to Polygon
-- "Client paid on Arbitrum, I got it on Polygon"
-
-**2:30 - 2:45 | Closing** 🚀
-- Show live transaction feed
-- "FreelancePay - Instant. Gasless. Global."
-
-### Key Demo Tips
-- **Don't wait for MetaMask** - skip confirmations in edit
-- **Use testnet** - have funds pre-loaded
-- **Show the AI** - it's the WOW factor
-- **End with live feed** - visual impact
-
-## 🏆 Bounty Qualification
-
-### Yellow Network ($15K pool)
-- ✅ Yellow SDK integration via @erc7824/nitrolite
-- ✅ Off-chain payment logic (instant, gasless)
-- ✅ Session-based spending for freelancer services
-- ✅ On-chain settlement when session ends
-- ✅ 2-3 min demo video
-
-### Arc - Crosschain Financial Apps ($5K pool)
-- ✅ Uses Arc + Circle Gateway + USDC
-- ✅ Multiple chains as one liquidity surface
-- ✅ Seamless UX despite crosschain complexity
-- ✅ Functional MVP with architecture diagram
-- ✅ Video demonstration
-
-### Arc - Global Payouts ($2.5K pool)
-- ✅ Automated payout logic
-- ✅ Multi-chain settlement for freelancers
-- ✅ Uses Circle Wallets + Bridge Kit
-- ✅ Real-world use case (freelancer payouts)
-
-### ENS Integration ($3.5K pool - split)
-- ✅ Custom ENS integration code (not just RainbowKit)
-- ✅ ENS text records for profile data
-- ✅ Functional demo without hardcoded values
-- ✅ Open source on GitHub
-
-### ENS Creative DeFi ($1.5K pool)
-- ✅ Novel use of ENS for DeFi
-- ✅ Text records store payment preferences
-- ✅ ENS as decentralized identity layer
-
-## 📁 Project Structure
-
-```
-freelance-pay/
-├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── page.tsx           # Landing page with live feed
-│   │   ├── dashboard/         # Freelancer dashboard
-│   │   └── pay/[ens]/         # Payment page (core flow)
-│   ├── components/
-│   │   ├── AIAgentChat.tsx    # 🤖 AI Payment Agent (WOW factor!)
-│   │   ├── LiveTransactions.tsx # 📊 Real-time tx feed
-│   │   ├── ArchitectureDiagram.tsx # 🎨 Animated architecture
-│   │   ├── Providers.tsx      # Wallet providers
-│   │   └── index.ts
-│   ├── hooks/
-│   │   ├── useYellowSession.ts   # ⭐ Yellow SDK hook
-│   │   ├── useENSProfile.ts      # ⭐ Custom ENS text records
-│   │   └── useCircleBridge.ts    # ⭐ Circle Bridge Kit hook
-│   ├── lib/
-│   │   ├── agent.ts           # 🤖 AI Agent logic
-│   │   ├── yellow.ts          # Yellow Network wrapper
-│   │   ├── ens.ts             # ENS utilities (bounty code!)
-│   │   ├── circle.ts          # Circle SDK wrapper
-│   │   └── constants.ts
-│   └── types/
-│       └── index.ts
-├── docs/
-├── .env.example
-├── package.json
-└── README.md
-```
-
 ## 🧪 Testing
 
 ```bash
@@ -279,19 +172,9 @@ npm run build
 vercel --prod
 ```
 
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
 ## 🤝 Team
 
 Built for HackMoney 2026 by Rob - Full-stack developer specializing in React, Next.js, and Web3.
-
-## 🔗 Links
-
-- **Live Demo**: [freelancepay.vercel.app](https://freelancepay.vercel.app)
-- **Video Demo**: [YouTube/Loom link]
-- **GitHub**: [github.com/yourusername/freelance-pay](https://github.com/yourusername/freelance-pay)
 
 ---
 
