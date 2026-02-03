@@ -1,0 +1,48 @@
+{
+  "name": "freelance-pay",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Instant global payments for freelancers using Yellow Network, Circle Arc, and ENS",
+  "author": "Rob",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^6.0.0",
+    "@erc7824/nitrolite": "^0.5.0",
+    "@rainbow-me/rainbowkit": "^2.1.0",
+    "@tanstack/react-query": "^5.28.0",
+    "clsx": "^2.1.0",
+    "ethers": "^6.11.0",
+    "framer-motion": "^11.0.0",
+    "lucide-react": "^0.359.0",
+    "next": "14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "tailwind-merge": "^2.2.0",
+    "viem": "^2.8.0",
+    "wagmi": "^2.5.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
