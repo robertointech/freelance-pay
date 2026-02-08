@@ -1,8 +1,3 @@
-// ===========================================
-// useYellowSession Hook
-// ===========================================
-// React hook for managing Yellow Network payment sessions
-
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
@@ -11,15 +6,12 @@ import { getYellowClient, initYellowClient, YellowClient } from '@/lib/yellow';
 import type { YellowSession, Payment, YellowMessage } from '@/types';
 
 interface UseYellowSessionReturn {
-  // State
   isConnected: boolean;
   isConnecting: boolean;
   session: YellowSession | null;
   payments: Payment[];
   balance: { payer: string; freelancer: string } | null;
   error: string | null;
-  
-  // Actions
   connect: () => Promise<void>;
   createSession: (freelancerAddress: string, deposit: string) => Promise<YellowSession>;
   sendPayment: (amount: string) => Promise<Payment>;
@@ -27,24 +19,6 @@ interface UseYellowSessionReturn {
   disconnect: () => void;
 }
 
-/**
- * Hook for managing Yellow Network payment sessions
- * 
- * Usage:
- * ```tsx
- * const { 
- *   isConnected, 
- *   createSession, 
- *   sendPayment 
- * } = useYellowSession();
- * 
- * // Create a session with a freelancer
- * await createSession(freelancerAddress, "100"); // Deposit 100 USDC
- * 
- * // Send instant payments
- * await sendPayment("25"); // Send 25 USDC instantly!
- * ```
- */
 export function useYellowSession(): UseYellowSessionReturn {
   const { address, isConnected: walletConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
@@ -57,9 +31,6 @@ export function useYellowSession(): UseYellowSessionReturn {
   const [balance, setBalance] = useState<{ payer: string; freelancer: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Connect to Yellow Network
-   */
   const connect = useCallback(async () => {
     if (!address || !walletClient) {
       setError('Please connect your wallet first');
@@ -70,20 +41,10 @@ export function useYellowSession(): UseYellowSessionReturn {
     setError(null);
 
     try {
-      // Create message signer from wallet client
-      const messageSigner = async (message: string) => {
-        const signature = await walletClient.signMessage({
-          message,
-        });
-        return signature;
-      };
-
-      // Initialize Yellow client
-      const yellowClient = await initYellowClient(address, messageSigner);
+      const yellowClient = await initYellowClient(address, walletClient);
       setClient(yellowClient);
       setIsConnected(true);
-
-      console.log('🟢 Connected to Yellow Network');
+      console.log('🟢 Yellow session hook connected');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to connect';
       setError(message);
@@ -93,13 +54,24 @@ export function useYellowSession(): UseYellowSessionReturn {
     }
   }, [address, walletClient]);
 
-  /**
-   * Create a payment session with a freelancer
-   */
   const createSession = useCallback(async (
     freelancerAddress: string,
     deposit: string
   ): Promise<YellowSession> => {
+    // Auto-connect if not connected
+    if (!client && address && walletClient) {
+      console.log('Auto-connecting to Yellow...');
+      const yellowClient = await initYellowClient(address, walletClient);
+      setClient(yellowClient);
+      setIsConnected(true);
+      
+      const newSession = await yellowClient.createPaymentSession(freelancerAddress, deposit);
+      setSession(newSession);
+      const sessionBalance = yellowClient.getSessionBalance(newSession.id);
+      setBalance(sessionBalance);
+      return newSession;
+    }
+
     if (!client || !address) {
       throw new Error('Not connected to Yellow Network');
     }
@@ -107,51 +79,31 @@ export function useYellowSession(): UseYellowSessionReturn {
     setError(null);
 
     try {
-      const newSession = await client.createPaymentSession(
-        freelancerAddress,
-        deposit
-      );
-
+      const newSession = await client.createPaymentSession(freelancerAddress, deposit);
       setSession(newSession);
-      
-      // Update balance
       const sessionBalance = client.getSessionBalance(newSession.id);
       setBalance(sessionBalance);
-
       return newSession;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to create session';
       setError(message);
       throw err;
     }
-  }, [client, address]);
+  }, [client, address, walletClient]);
 
-  /**
-   * Send an instant payment
-   */
   const sendPayment = useCallback(async (amount: string): Promise<Payment> => {
     if (!client || !session) {
       throw new Error('No active session');
     }
 
     const freelancerAddress = session.participants[1];
-    
     setError(null);
 
     try {
-      const payment = await client.sendPayment(
-        session.id,
-        amount,
-        freelancerAddress
-      );
-
-      // Add to payments list
+      const payment = await client.sendPayment(session.id, amount, freelancerAddress);
       setPayments(prev => [...prev, payment]);
-
-      // Update balance
       const sessionBalance = client.getSessionBalance(session.id);
       setBalance(sessionBalance);
-
       return payment;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Payment failed';
@@ -160,9 +112,6 @@ export function useYellowSession(): UseYellowSessionReturn {
     }
   }, [client, session]);
 
-  /**
-   * Close session and trigger settlement
-   */
   const closeSession = useCallback(async () => {
     if (!client || !session) {
       throw new Error('No active session');
@@ -172,8 +121,6 @@ export function useYellowSession(): UseYellowSessionReturn {
 
     try {
       await client.closeSession(session.id);
-      
-      // Update session status
       setSession(prev => prev ? { ...prev, status: 'settling' } : null);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to close session';
@@ -182,9 +129,6 @@ export function useYellowSession(): UseYellowSessionReturn {
     }
   }, [client, session]);
 
-  /**
-   * Disconnect from Yellow Network
-   */
   const disconnect = useCallback(() => {
     if (client) {
       client.disconnect();
@@ -196,66 +140,19 @@ export function useYellowSession(): UseYellowSessionReturn {
     setBalance(null);
   }, [client]);
 
-  /**
-   * Handle incoming messages from Yellow Network
-   */
   useEffect(() => {
     if (!client) return;
 
     const unsubscribe = client.onMessage((message: YellowMessage) => {
-      switch (message.type) {
-        case 'session_created':
-          if (session && message.sessionId === session.id) {
-            setSession(prev => prev ? { ...prev, status: 'active' } : null);
-          }
-          break;
-
-        case 'payment':
-          // Payment received (for freelancers)
-          if (message.amount && message.sender) {
-            const payment: Payment = {
-              id: `incoming_${Date.now()}`,
-              sessionId: session?.id || '',
-              from: message.sender,
-              to: address || '',
-              amount: message.amount,
-              timestamp: Date.now(),
-              status: 'confirmed',
-            };
-            setPayments(prev => [...prev, payment]);
-          }
-          break;
-
-        case 'balance_update':
-          // Refresh balance
-          if (session) {
-            const sessionBalance = client.getSessionBalance(session.id);
-            setBalance(sessionBalance);
-          }
-          break;
-
-        case 'error':
-          setError(message.error || 'Unknown error');
-          break;
+      if (message.type === 'balance_update' && session) {
+        const sessionBalance = client.getSessionBalance(session.id);
+        setBalance(sessionBalance);
       }
     });
 
     return () => unsubscribe();
-  }, [client, session, address]);
+  }, [client, session]);
 
-  /**
-   * Auto-connect when wallet is available
-   */
-  useEffect(() => {
-    if (walletConnected && address && walletClient && !isConnected && !isConnecting) {
-      // Could auto-connect here if desired
-      // connect();
-    }
-  }, [walletConnected, address, walletClient, isConnected, isConnecting, connect]);
-
-  /**
-   * Cleanup on unmount
-   */
   useEffect(() => {
     return () => {
       if (client) {
